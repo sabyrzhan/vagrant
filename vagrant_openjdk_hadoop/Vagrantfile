@@ -1,0 +1,42 @@
+Vagrant.configure("2") do |config|
+    config.ssh.insert_key = false
+    config.vm.provider "virtualbox" do |v|
+        v.memory = 2048
+        v.cpus = 1
+    end
+
+    config.vm.define "master" do |subconfig|
+        subconfig.vm.box  = "ubuntu/focal64"
+        subconfig.vm.hostname = "master"
+        subconfig.vm.network :private_network, ip: "192.168.0.10"
+        subconfig.vm.provider "virtualbox" do |v|
+            v.memory = 2048
+            v.cpus = 2
+        end
+    end
+
+    # Install OpenJDK
+    config.vm.provision "shell", inline: <<-SCRIPT
+        apt-get install -y avahi-daemon libnss-mdns openjdk-11-jdk
+    SCRIPT
+
+    # Download Hadoop and unpack
+    $script = <<-SCRIPT
+        wget -q https://downloads.apache.org/hadoop/common/hadoop-3.3.0/hadoop-3.3.0.tar.gz
+        tar xzf hadoop-3.3.0.tar.gz
+        echo 'export HADOOP_HOME=/home/vagrant/hadoop-3.3.0' >> .bashrc
+        echo 'export HADOOP_INSTALL=$HADOOP_HOME' >> .bashrc
+        echo 'export HADOOP_MAPRED_HOME=$HADOOP_HOME' >> .bashrc
+        echo 'export HADOOP_COMMON_HOME=$HADOOP_HOME' >> .bashrc
+        echo 'export HADOOP_HDFS_HOME=$HADOOP_HOME' >> .bashrc
+        echo 'export YARN_HOME=$HADOOP_HOME' >> .bashrc
+        echo 'export HADOOP_YARN_HOME=$HADOOP_HOME' >> .bashrc
+        echo 'export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native' >> .bashrc
+        echo 'export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin' >> .bashrc
+        echo 'export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/nativ"' >> .bashrc
+        mkdir -p hadoop_tmpdata
+        mkdir -p dfsdata/namenode
+        mkdir -p dfsdata/datanode
+    SCRIPT
+    config.vm.provision "shell", inline: $script, privileged: false
+end
