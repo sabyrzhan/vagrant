@@ -9,8 +9,8 @@ Vagrant.configure("2") do |config|
     end
 
     # Copy configuration files
-    config.vm.provision "file", source: "/Users/sabyrzhan/projects/HadoopTest/output/cars.data", destination: "cars.data"
-    config.vm.provision "copy-jar", type: "file", source: "/Users/sabyrzhan/projects/HadoopTest/target/HadoopTest-1.0-SNAPSHOT.jar", destination: "HadoopTest-1.0-SNAPSHOT.jar"
+    config.vm.provision "file", source: "/Users/sabyrzhan/projects/HadoopPlayground/output/cars.data", destination: "cars.data"
+    config.vm.provision "copy-jar", type: "file", source: "/Users/sabyrzhan/projects/HadoopPlayground/target/HadoopTest-1.0-SNAPSHOT.jar", destination: "HadoopTest-1.0-SNAPSHOT.jar"
     config.vm.provision "file", source: "core-site.xml", destination: "hadoop-3.3.0/etc/hadoop/"
     config.vm.provision "file", source: "hadoop-env.sh", destination: "hadoop-3.3.0/etc/hadoop/"
     config.vm.provision "file", source: "hdfs-site.xml", destination: "hadoop-3.3.0/etc/hadoop/"
