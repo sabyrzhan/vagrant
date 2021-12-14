@@ -3,6 +3,8 @@
 * `vagrant_openjdk_hadoop` -- installs OpenJDK 11 and Hadoop. Used as a base box for other provisions.
 * `vagrant_hadoop` -- copies Hadoop configurations to vm. However Hadoop must be manually started.
 * `vagrant_k8s` -- configures and boots K8s cluster with node size dfined in Vagrantfile.
+* `vagrant_docker` -- configures and boots new host with `docker` installed.
+  In `Vagrantfile` you can set `host_size` - how many hosts you want to boot. Default is `1`.
 
 
 ## Build and install base box
