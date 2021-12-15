@@ -26,6 +26,14 @@
         "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
         $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
+  - name: Create /etc/docker folder
+    file: path=/etc/docker state=directory
+
+  - name: Change docker cgroup driver to systemd
+    ansible.builtin.copy:
+      src: docker-daemon.json
+      dest: /etc/docker/daemon.json
+
   - name: Install docker and its dependecies
     ansible.builtin.shell: |
       apt-get update

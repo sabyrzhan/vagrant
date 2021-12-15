@@ -13,9 +13,9 @@
       - ca-certificates
 
   - name: Add an apt signing key for Kubernetes
-    apt_key:
-      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-      state: present
+    command: |
+      curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    become: true
 
   - name: Add apt repository for stable version
     apt_repository:
@@ -47,14 +47,8 @@
         - kubectl
   
   - name: Hold installed K8s binaries
-    dpkg_selections:
-      name: {{ packages }}
-      selection: hold
-    vars:
-      packages:
-        - kubelet
-        - kubeadm
-        - kubectl
+    command: |
+      apt-mark hold kubelet kubeadm kubectl
 
   - name: Configure node ip
     lineinfile:
@@ -70,6 +64,7 @@
 
   - name: Initialize the Kubernetes cluster using kubeadm
     command: kubeadm init --apiserver-advertise-address="{{ node_ip }}" --apiserver-cert-extra-sans="{{ node_ip }}"  --node-name master --pod-network-cidr=192.168.0.0/16
+    become: true
 
   - name: Setup kubeconfig for vagrant user
     command: "{{ item }}"
