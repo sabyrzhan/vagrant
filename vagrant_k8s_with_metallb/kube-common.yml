@@ -1,0 +1,63 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: Install packages that allow apt to be used over HTTPS
+    apt:
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+      - apt-transport-https
+      - ca-certificates
+
+  - name: Add an apt signing key for Kubernetes
+    command: |
+      curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    become: true
+
+  - name: Add apt repository for stable version
+    apt_repository:
+      repo: deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+
+  - name: Remove swapfile from /etc/fstab
+    mount:
+      name: "{{ item }}"
+      fstype: swap
+      state: absent
+    with_items:
+      - swap
+      - none
+
+  - name: Disable swap
+    command: swapoff -a
+    when: ansible_swaptotal_mb > 0
+
+  - name: Install Kubernetes binaries
+    apt:
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+        - kubelet
+        - kubeadm
+        - kubectl
+  
+  - name: Hold installed K8s binaries
+    command: |
+      apt-mark hold kubelet kubeadm kubectl
+
+  - name: Configure node ip
+    lineinfile:
+      path: /etc/default/kubelet
+      line: KUBELET_EXTRA_ARGS=--node-ip={{ node_ip }}
+      create: yes
+
+  - name: Restart kubelet
+    service:
+      name: kubelet
+      daemon_reload: yes
+      state: restarted
