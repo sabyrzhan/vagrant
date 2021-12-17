@@ -3,17 +3,16 @@
   become: true
   tasks:
   - name: "Set strictARP: true in kube-proxy"
-    command: |
+    ansible.builtin.shell: |
       kubectl get configmap kube-proxy -n kube-system -o yaml | \
       sed -e "s/strictARP: false/strictARP: true/" | \
       kubectl apply -f - -n kube-system
-    become: true
 
   - name: Copy metallb-config.yml
     copy: src={{ playbook_dir }}/metallb-config.yml dest=/tmp/config.yml mode=0777
 
   - name: Apply MetalLB manifests
-    command: |
+    ansible.builtin.shell: |
       kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.11.0/manifests/namespace.yaml
       kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.11.0/manifests/metallb.yaml
 
