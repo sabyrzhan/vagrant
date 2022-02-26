@@ -15,7 +15,7 @@ case $target in
     psql -c "select * from pg_create_physical_replication_slot('slave1_slot');"
     ;;
   backup)
-    pg_basebackup --pgdata /var/lib/postgresql/data --format=p \
+    pg_basebackup --pgdata /var/lib/postgresql/14/main --format=p \
         --write-recovery-conf --checkpoint=fast --label=mffb --progress \
         --host=pgmaster --port=5432 --username=replicator
     ;;
