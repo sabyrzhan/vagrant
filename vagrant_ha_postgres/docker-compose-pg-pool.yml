@@ -1,0 +1,24 @@
+version: "3"
+services:
+  pgpool:
+    image: bitnami/pgpool:4
+    ports:
+      - 5432:5432
+    extra_hosts:
+      pgmaster: 192.168.1.142
+      pgslave1: 192.168.1.142
+      pgslave2: 192.168.1.142
+      pgslave3: 192.168.1.142
+    environment:
+      - PGPOOL_BACKEND_NODES=0:pgmaster:5433,1:pgslave1:5434,2:pgslave2:5435,3:pgslave3:5436
+      - PGPOOL_SR_CHECK_USER=postgres
+      - PGPOOL_SR_CHECK_PASSWORD=postgres
+      - PGPOOL_ENABLE_LDAP=no
+      - PGPOOL_ENABLE_STATEMENT_LOAD_BALANCING=yes
+      - PGPOOL_ENABLE_POOL_HBA=no
+      - PGPOOL_ENABLE_POOL_PASSWD=no
+      - PGPOOL_POSTGRES_USERNAME=postgres
+      - PGPOOL_POSTGRES_PASSWORD=postgres
+      - PGPOOL_ADMIN_USERNAME=postgres
+      - PGPOOL_ADMIN_PASSWORD=postgres
+      - PGPOOL_NUM_INIT_CHILDREN=95
