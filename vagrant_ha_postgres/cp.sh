@@ -21,7 +21,7 @@ case $target in
         --host=pgmaster --port=5432 --username=replicator
     ;;
   hosts)
-    echo 'pgmaster 192.168.0.11' >> /etc/hosts
+    echo '192.168.0.11 pgmaster' >> /etc/hosts
     ;;
   *)
     echo 'Invalid target'
