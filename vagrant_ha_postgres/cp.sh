@@ -22,3 +22,4 @@ case $target in
   *)
     echo 'Invalid target'
     ;;
+esac
