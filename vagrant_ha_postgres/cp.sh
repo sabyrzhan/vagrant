@@ -16,9 +16,11 @@ case $target in
     psql -c "select * from pg_create_physical_replication_slot('slave1_slot');"
     ;;
   backup)
+    rm -rf /var/lib/postgresql/14/main/*
     pg_basebackup --pgdata /var/lib/postgresql/14/main --format=p \
         --write-recovery-conf --checkpoint=fast --label=mffb --progress \
         --host=pgmaster --port=5432 --username=replicator
+    chown -R postgres:postgres /var/lib/postgresql/14/main
     ;;
   hosts)
     echo '192.168.0.11 pgmaster' >> /etc/hosts
