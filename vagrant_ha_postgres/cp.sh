@@ -2,11 +2,11 @@
 target=$1
 case $target in
   master)
-    cp ./postgresql.conf.master /etc/postgresql/12/main/postgresql.conf
-    cp ./pg_hba.conf.master /etc/postgresql/12/main/pg_hba.conf
+    cp ./postgresql.conf.master /etc/postgresql/14/main/postgresql.conf
+    cp ./pg_hba.conf.master /etc/postgresql/14/main/pg_hba.conf
     ;;
   slave)
-    cp ./postgresql.conf.slave /etc/postgresql/12/main/postgresql.conf
+    cp ./postgresql.conf.slave /etc/postgresql/14/main/postgresql.conf
     ;;
   replicator)
     psql -c "CREATE USER replicator WITH REPLICATION ENCRYPTED PASSWORD 'replicator';"
