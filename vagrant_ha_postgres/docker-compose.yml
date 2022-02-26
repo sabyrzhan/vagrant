@@ -1,0 +1,55 @@
+version: "3"
+services:
+  pgmaster:
+    image: custompostgres
+    build:
+      context: .
+    ports:
+    - 5433:5432
+    environment:
+    - POSTGRES_PASSWORD=postgres
+    volumes:
+    - ./pg_hba.conf.master:/etc/postgresql/pg_hba.conf
+    - ./postgresql.conf.master:/etc/postgresql/postgresql.conf
+    - ./init-user-db.sql:/docker-entrypoint-initdb.d/init-user-db.sql
+    - backup:/mnt/db_archive
+    command: ["-c", "config_file=/etc/postgresql/postgresql.conf", "-c", "hba_file=/etc/postgresql/pg_hba.conf"]
+  pgslave1:
+    image: custompostgres
+    build:
+      context: .
+    ports:
+    - 5434:5432
+    environment:
+    - POSTGRES_PASSWORD=postgres
+    volumes:
+    - ./postgresql.conf.slave:/etc/postgresql/postgresql.conf
+    - backup:/mnt/db_archive
+    command: ["-c", "config_file=/etc/postgresql/postgresql.conf"]
+  pgslave2:
+    image: custompostgres
+    build:
+      context: .
+    ports:
+    - 5435:5432
+    environment:
+    - POSTGRES_PASSWORD=postgres
+    volumes:
+    - ./postgresql.conf.slave:/etc/postgresql/postgresql.conf
+    - backup:/mnt/db_archive
+    command: ["-c", "config_file=/etc/postgresql/postgresql.conf"]
+  pgslave3:
+    image: custompostgres
+    build:
+      context: .
+    ports:
+    - 5436:5432
+    environment:
+    - POSTGRES_PASSWORD=postgres
+    volumes:
+    - ./postgresql.conf.slave:/etc/postgresql/postgresql.conf
+    - backup:/mnt/db_archive
+    command: ["-c", "config_file=/etc/postgresql/postgresql.conf"]
+volumes:
+  backup:
+  dbdata:
