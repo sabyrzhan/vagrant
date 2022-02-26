@@ -7,6 +7,7 @@ case $target in
     ;;
   slave)
     cp ./postgresql.conf.slave /etc/postgresql/14/main/postgresql.conf
+    cp ./pg_hba.conf.slave /etc/postgresql/14/main/pg_hba.conf
     ;;
   replicator)
     psql -c "CREATE USER replicator WITH REPLICATION ENCRYPTED PASSWORD 'replicator';"
@@ -18,6 +19,9 @@ case $target in
     pg_basebackup --pgdata /var/lib/postgresql/14/main --format=p \
         --write-recovery-conf --checkpoint=fast --label=mffb --progress \
         --host=pgmaster --port=5432 --username=replicator
+    ;;
+  hosts)
+    echo 'pgmaster 192.168.0.11' >> /etc/hosts
     ;;
   *)
     echo 'Invalid target'
